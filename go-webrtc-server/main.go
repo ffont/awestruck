@@ -41,7 +41,7 @@ func main() {
 		// Stop the running processes gracefully
 		// Stop any WebRTC-related processes
 		// Stop any GStreamer pipelines
-		// Stop SuperCollider or any other audio processing tasks
+		// Stop SonicPi or any other audio processing tasks
 
 		os.Exit(0)
 	}()
@@ -169,8 +169,8 @@ func handleOffer(w http.ResponseWriter, r *http.Request) {
 	// Wait for the pipeline to be ready
 	<-pipelineReady
 
-	log.Println("starting supercollider...")
-	go startSuperCollider()
+	log.Println("starting SonicPi...")
+	go startSonicPi()
 
 	<-gatherComplete
 
@@ -186,8 +186,8 @@ func handleOffer(w http.ResponseWriter, r *http.Request) {
 	w.Write(encodedLocalDesc) // This writes the JSON representation of the local description
 }
 
-func startSuperCollider() {
-	cmd := exec.Command("xvfb-run", "-a", "sclang", "/app/supercollider/liljedahl.scd")
+func startSonicPi() {
+	cmd := exec.Command("/usr/lib/sonic-pi/server/bin/sonic-pi-server.rb")
 
 	// Create pipes for stdout and stderr
 	stdout, err := cmd.StdoutPipe()
@@ -203,30 +203,30 @@ func startSuperCollider() {
 
 	// Start the command
 	if err := cmd.Start(); err != nil {
-		log.Printf("Failed to start SuperCollider: %v\n", err)
+		log.Printf("Failed to start SonicPi: %v\n", err)
 		return
 	}
-	log.Println("SuperCollider started")
+	log.Println("SonicPi started")
 
 	// Create scanner to read stdout and stderr
 	go func() {
 		scanner := bufio.NewScanner(stdout)
 		for scanner.Scan() {
-			log.Println("SuperCollider stdout: ", scanner.Text())
+			log.Println("SonicPi stdout: ", scanner.Text())
 		}
 	}()
 	go func() {
 		scanner := bufio.NewScanner(stderr)
 		for scanner.Scan() {
-			log.Println("SuperCollider stderr: ", scanner.Text())
+			log.Println("SonicPi stderr: ", scanner.Text())
 		}
 	}()
 
 	// Wait for the command to finish
 	err = cmd.Wait()
 	if err != nil {
-		log.Printf("SuperCollider exited with error: %v\n", err)
+		log.Printf("SonicPi exited with error: %v\n", err)
 	} else {
-		log.Println("SuperCollider finished successfully")
+		log.Println("SonicPi finished successfully")
 	}
 }

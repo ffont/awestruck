@@ -15,7 +15,7 @@ services:
     worker:
         build:
             context: .
-            dockerfile: docker/Dockerfile.streamer
+            dockerfile: docker/Dockerfile.worker
         user: "1000"
         privileged: true
         ulimits:
@@ -38,4 +38,4 @@ services:
             #- 50000:50000
         environment:
             - DEBIAN_FRONTEND=noninteractive
-            - PION_LOG_TRACE=all
+            #- PION_LOG_TRACE=all

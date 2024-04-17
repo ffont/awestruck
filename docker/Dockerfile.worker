@@ -56,16 +56,18 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-plugins-base \
     gstreamer1.0-plugins-good \
     gstreamer1.0-tools \
-    supercollider \
+    sonic-pi-server \
+    netcat \
     xvfb \
     libgstreamer1.0-dev \
     libgstreamer-plugins-base1.0-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY startup.scd /home/appuser/.config/SuperCollider/startup.scd
+# Install sonic pi client
+RUN gem install sonic-pi-cli
 
+# Copy compiled webrtc-server
 COPY --from=builder /app/webrtc-server /app/webrtc-server
-COPY supercollider /app/supercollider
 
 # Copy the client files
 COPY client /app/client
@@ -75,6 +77,8 @@ COPY client /app/client
 # Ensure to switch to the non-root user at the end of your Dockerfile
 USER appuser
 
-EXPOSE 8080
+# Make folder for sonic pi logs
+RUN mkdir -p /home/appuser/.sonic-pi/log/
 
+EXPOSE 8080
 CMD jackd -r --port-max 20 -d dummy & /app/webrtc-server
