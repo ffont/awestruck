@@ -28,14 +28,15 @@ services:
             - ./client:/app/client
             - /dev/snd:/dev/snd
             - /dev/shm:/dev/shm
+            - ./worker_startup.sh:/app/worker_startup.sh
+            - ./controller/server.py:/app/server.py
         ports:
             - 8080:8080
             - 3033:3033
             - 3478:3478/udp
             - 3478:3478/tcp
             - 5349:5349/tcp
-            - 57120:57120/udp # supercollider osc
-            #- 50000:50000
+            - 54321:54321
         environment:
             - DEBIAN_FRONTEND=noninteractive
             #- PION_LOG_TRACE=all

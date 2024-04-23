@@ -169,8 +169,8 @@ func handleOffer(w http.ResponseWriter, r *http.Request) {
 	// Wait for the pipeline to be ready
 	<-pipelineReady
 
-	log.Println("starting SonicPi...")
-	go startSonicPi()
+	//log.Println("starting SonicPi...")
+	//go startSonicPi()
 
 	<-gatherComplete
 
@@ -184,49 +184,4 @@ func handleOffer(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(encodedLocalDesc) // This writes the JSON representation of the local description
-}
-
-func startSonicPi() {
-	cmd := exec.Command("/usr/lib/sonic-pi/server/bin/sonic-pi-server.rb")
-
-	// Create pipes for stdout and stderr
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		log.Printf("Error obtaining stdout: %v\n", err)
-		return
-	}
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		log.Printf("Error obtaining stderr: %v\n", err)
-		return
-	}
-
-	// Start the command
-	if err := cmd.Start(); err != nil {
-		log.Printf("Failed to start SonicPi: %v\n", err)
-		return
-	}
-	log.Println("SonicPi started")
-
-	// Create scanner to read stdout and stderr
-	go func() {
-		scanner := bufio.NewScanner(stdout)
-		for scanner.Scan() {
-			log.Println("SonicPi stdout: ", scanner.Text())
-		}
-	}()
-	go func() {
-		scanner := bufio.NewScanner(stderr)
-		for scanner.Scan() {
-			log.Println("SonicPi stderr: ", scanner.Text())
-		}
-	}()
-
-	// Wait for the command to finish
-	err = cmd.Wait()
-	if err != nil {
-		log.Printf("SonicPi exited with error: %v\n", err)
-	} else {
-		log.Println("SonicPi finished successfully")
-	}
 }
