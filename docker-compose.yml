@@ -22,14 +22,15 @@ services:
           rtprio: 99
           memlock: -1
         volumes:
-            - ./go-webrtc-server:/build/go-webrtc-server/go-webrtc-server
-            - ./supercollider:/app/supercollider
-            - ./scripts:/app/scripts
-            - ./client:/app/client
             - /dev/snd:/dev/snd
             - /dev/shm:/dev/shm
+            - ./go-webrtc-server:/build/go-webrtc-server/go-webrtc-server
+            - ./client:/app/client
             - ./worker_startup.sh:/app/worker_startup.sh
             - ./controller/server.py:/app/server.py
+            - ./controller/algoritme.py:/app/algoritme.py
+            - ./AudioCollection:/audio
+            #- ./log:/home/appuser/.sonic-pi/log/
         ports:
             - 8080:8080
             - 3033:3033

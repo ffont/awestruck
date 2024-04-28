@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
-    supercollider \
     xvfb \
     libgstreamer1.0-dev \
     libgstreamer-plugins-base1.0-dev \
@@ -31,7 +30,7 @@ COPY go-webrtc-server/ .
 RUN go build -o /app/webrtc-server .
 
 # Start a new stage from scratch for a smaller, final image
-FROM debian:buster
+FROM debian:bullseye
 
 ENV DEBIAN_FRONTEND=noninteractive
 # ENV QT_QPA_PLATFORM=offscreen
@@ -71,6 +70,7 @@ RUN gem install sonic-pi-cli
 # Install python dependencies and app
 COPY controller/requirements.txt .
 COPY controller/server.py .
+COPY controller/algoritme.py .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy compiled webrtc-server

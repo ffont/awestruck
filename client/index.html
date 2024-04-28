@@ -27,13 +27,13 @@
     <script>
         const slider = document.getElementById("slider");
         slider.addEventListener("input", evt => {
-            fetch("http://localhost:5432/send_osc?address=test&value=" + evt.target.value)
+            fetch("http://localhost:54321/send_osc?address=test&value=" + evt.target.value)
                 .then((response) => response.json())
                 .then((json) => console.log(json));
         })
 
         document.getElementById("startSonicPiButton").addEventListener("click", evt => {
-            fetch("http://localhost:5432/start")
+            fetch("http://localhost:54321/start")
                 .then((response) => response.json())
                 .then((json) => console.log(json));
         })
